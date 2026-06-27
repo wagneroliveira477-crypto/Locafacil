@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#060a12"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="LocaFácil"/>
+<title>LocaFácil</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#060a12;color:#eef0ff;font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding-bottom:80px}
+button{cursor:pointer;font-family:inherit;border:none;transition:all .18s}
+button:active{opacity:.72;transform:scale(.96)}
+input,select,textarea{font-family:inherit;outline:none;transition:border-color .2s}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:#1e2845;border-radius:3px}
+
+/* ── HEADER ── */
+#header{background:#090e1cee;backdrop-filter:blur(18px);border-bottom:1px solid #141e38;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}
+.h-logo{width:38px;height:38px;background:linear-gradient(135deg,#0d5c32,#18a558);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.h-titles{margin-left:10px}
+.h-name{font-weight:800;font-size:16px;letter-spacing:-.4px}
+.h-sub{font-size:10px;color:#4a5880;margin-top:1px}
+.h-clock{text-align:right}
+.h-time{font-size:15px;font-weight:800;color:#18a558}
+.h-date{font-size:10px;color:#4a5880;margin-top:1px}
+
+/* ── NAV ── */
+#nav{position:fixed;bottom:0;left:0;right:0;background:#090e1cee;backdrop-filter:blur(18px);border-top:1px solid #141e38;display:flex;justify-content:space-around;padding:7px 0 13px;z-index:30}
+.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:3px 8px;color:#2e3a58;font-size:9px;font-weight:700;letter-spacing:.4px;min-width:52px}
+.nb .ni{font-size:21px;transition:transform .2s}
+.nb.active{color:#18a558}
+.nb.active .ni{transform:scale(1.12)}
+
+/* ── CONTENT ── */
+#app{padding:14px 14px 0;max-width:520px;margin:0 auto}
+
+/* ── CARDS ── */
+.card{background:#0c1222;border:1px solid #141e38;border-radius:16px}
+.card-p{padding:14px}
+
+/* ── STAT GRID ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.sc{background:#0c1222;border:1px solid #141e38;border-radius:15px;padding:13px}
+.sc-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:9px}
+.sc-lb{font-size:10px;color:#4a5880;font-weight:600;margin-bottom:3px;letter-spacing:.2px}
+.sc-vl{font-size:19px;font-weight:900;letter-spacing:-.5px}
+
+/* ── LIST ITEM ── */
+.li{background:#0c1222;border:1px solid #141e38;border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer;transition:border-color .2s,transform .15s}
+.li:active{border-color:#18a558;transform:scale(.99)}
+.li.red{border-color:#f8717155}
+.li.yellow{border-color:#fbbf2455}
+.li-row{display:flex;align-items:center;gap:11px}
+.li-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.li-info{flex:1;min-width:0}
+.li-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-sub{font-size:11px;color:#4a5880;margin-top:2px}
+.li-right{text-align:right;flex-shrink:0}
+.li-val{font-weight:800;font-size:14px}
+.li-meta{font-size:10px;color:#4a5880;margin-top:2px}
+
+/* ── PROGRESS ── */
+.pb{background:#141e38;border-radius:4px;height:4px;overflow:hidden;margin-top:9px}
+.pf{height:100%;border-radius:4px;transition:width .5s}
+.pl{display:flex;justify-content:space-between;font-size:9px;color:#4a5880;margin-top:3px}
+
+/* ── BADGE ── */
+.bdg{border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;display:inline-block}
+.bg{background:#18a55820;color:#18a558;border:1px solid #18a55840}
+.br{background:#f8717120;color:#f87171;border:1px solid #f8717140}
+.by{background:#fbbf2420;color:#fbbf24;border:1px solid #fbbf2440}
+.bb{background:#4f8ef720;color:#4f8ef7;border:1px solid #4f8ef740}
+.bgr{background:#3a456020;color:#8890b0;border:1px solid #3a456040}
+
+/* ── SEC HEADER ── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sh h2{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.st{font-size:10px;font-weight:700;color:#4a5880;letter-spacing:.8px;margin:14px 0 8px}
+
+/* ── MODAL ── */
+#ov{display:none;position:fixed;inset:0;background:#00000099;z-index:50;align-items:flex-end;justify-content:center}
+#ov.open{display:flex}
+#mb{background:#090e1c;border:1px solid #141e38;border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:94vh;overflow-y:auto;padding:18px 16px 40px}
+.mh{width:38px;height:4px;background:#1a2440;border-radius:2px;margin:0 auto 16px}
+.mt{font-size:18px;font-weight:800;margin-bottom:16px;letter-spacing:-.3px}
+
+/* ── FORM ── */
+.f{margin-bottom:13px}
+.f label{display:block;font-size:10px;color:#4a5880;font-weight:700;letter-spacing:.5px;margin-bottom:5px}
+.f input,.f select,.f textarea{width:100%;background:#060a12;border:1.5px solid #141e38;border-radius:11px;padding:11px 12px;color:#eef0ff;font-size:14px}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:#18a558}
+.f select option{background:#060a12}
+.f textarea{resize:none;height:76px;line-height:1.5}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── BUTTONS ── */
+.bp{background:linear-gradient(135deg,#0d5c32,#18a558);color:#fff;border-radius:12px;padding:13px;width:100%;font-size:15px;font-weight:700;box-shadow:0 4px 18px #18a55830}
+.by2{background:linear-gradient(135deg,#92400e,#d97706);color:#fff;border-radius:12px;padding:13px;width:100%;font-size:15px;font-weight:700;margin-top:8px}
+.bg2{background:#141e38;color:#eef0ff;border-radius:11px;padding:10px 14px;font-size:13px;font-weight:600}
+.bd{background:#f8717115;color:#f87171;border:1px solid #f8717140;border-radius:12px;padding:12px;width:100%;font-size:13px;font-weight:600;margin-top:9px}
+.br2{background:#4f8ef715;color:#4f8ef7;border:1px solid #4f8ef740;border-radius:12px;padding:12px;width:100%;font-size:13px;font-weight:600;margin-top:8px}
+
+/* ── DETAIL ── */
+.dc{background:#0c1222;border:1px solid #141e38;border-radius:13px;padding:13px;margin-bottom:11px}
+.dr{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid #141e3833}
+.dr:last-child{border-bottom:none}
+.dl{font-size:12px;color:#4a5880}
+.dv{font-size:12px;font-weight:600;color:#eef0ff;text-align:right;max-width:58%}
+
+/* ── SUMMARY ── */
+.sb{background:#071410;border:1px solid #0d3022;border-radius:13px;padding:13px;margin-bottom:11px}
+.sbt{font-size:10px;color:#18a558;font-weight:700;letter-spacing:.5px;margin-bottom:9px}
+
+/* ── PHOTO ── */
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
+.pt{width:100%;aspect-ratio:1;border-radius:9px;object-fit:cover;border:1px solid #141e38}
+.pa{width:100%;aspect-ratio:1;border-radius:9px;background:#141e38;border:1.5px dashed #253060;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;font-size:20px;color:#4a5880}
+.pa span{font-size:9px}
+
+/* ── TIMELINE ── */
+.tl-item{display:flex;gap:12px;margin-bottom:14px}
+.tl-dot{display:flex;flex-direction:column;align-items:center;gap:0}
+.tl-circle{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.tl-line{width:2px;flex:1;background:#141e38;margin:4px 0}
+.tl-content{flex:1;background:#0c1222;border:1px solid #141e38;border-radius:12px;padding:11px;margin-bottom:2px}
+.tl-name{font-weight:700;font-size:13px}
+.tl-period{font-size:11px;color:#4a5880;margin-top:2px}
+.tl-val{font-size:13px;font-weight:800;color:#18a558;margin-top:4px}
+
+/* ── CHART ── */
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:80px}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;transition:height .5s;min-height:4px}
+.chart-label{font-size:9px;color:#4a5880;text-align:center;margin-top:4px}
+
+/* ── OCUPACAO ── */
+.ocp-bar{height:8px;border-radius:4px;background:#141e38;overflow:hidden;margin-top:6px}
+.ocp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#0d5c32,#18a558)}
+
+/* ── TIPO TAG ── */
+.tt{font-size:9px;font-weight:700;color:#18a558;background:#18a55815;border:1px solid #18a55830;border-radius:5px;padding:2px 6px;display:inline-block;margin-bottom:5px}
+
+/* ── AVISO ── */
+.aviso{background:#3a1a0a;border:1px solid #f8717140;border-radius:10px;padding:10px 12px;font-size:12px;color:#f87171;margin-bottom:11px}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:44px 20px;color:#2e3a58}
+.empty-ic{font-size:44px;margin-bottom:10px;opacity:.4}
+.empty-tx{font-size:13px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:#0d5c32;color:#fff;padding:9px 20px;border-radius:20px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:100;white-space:nowrap;box-shadow:0 4px 18px #18a55840}
+#toast.show{opacity:1}
+
+/* ── VIEW TABS ── */
+.vt{display:flex;background:#0c1222;border:1px solid #141e38;border-radius:12px;padding:3px;margin-bottom:14px;gap:3px}
+.vt-btn{flex:1;padding:8px;border-radius:9px;font-size:11px;font-weight:700;color:#4a5880;background:none;border:none}
+.vt-btn.active{background:#0d3022;color:#18a558}
+
+/* ── ESTOQUE BADGE ── */
+.est-badge{display:inline-flex;align-items:center;gap:4px;background:#141e38;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:#eef0ff}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div style="display:flex;align-items:center">
+    <div class="h-logo">🏠</div>
+    <div class="h-titles">
+      <div class="h-name">LocaFácil</div>
+      <div class="h-sub">Gestão de aluguéis e locações</div>
+    </div>
+  </div>
+  <div class="h-clock">
+    <div class="h-time" id="htime"></div>
+    <div class="h-date" id="hdate"></div>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<nav id="nav">
+  <button class="nb active" onclick="go('dash')" id="t-dash"><span class="ni">🏠</span>Início</button>
+  <button class="nb" onclick="go('imoveis')" id="t-imoveis"><span class="ni">🏘️</span>Imóveis</button>
+  <button class="nb" onclick="go('itens')" id="t-itens"><span class="ni">📦</span>Itens</button>
+  <button class="nb" onclick="go('clientes')" id="t-clientes"><span class="ni">👥</span>Clientes</button>
+  <button class="nb" onclick="go('fin')" id="t-fin"><span class="ni">📊</span>Financeiro</button>
+</nav>
+
+<div id="ov" onclick="closeModal()">
+  <div id="mb" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <div id="mc"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let S = JSON.parse(localStorage.getItem('lf2') || 'null') || {
+  clientes:[],   // {id,nome,telefone,cpf,email,obs,foto}
+  imoveis:[],    // {id,endereco,tipo,descricao,fotos[],status:'disponivel'|'ocupado'|'manutencao'}
+  itens:[],      // {id,nome,categoria,descricao,qtdTotal,fotos[],status}
+  contratos:[],  // {id,tipo:'imovel'|'item',refId,clienteId,dataInicio,dataFim,valor,tipoCob,periodo,obs,fotosEntrada[],fotosSaida[],status:'ativo'|'encerrado',pagamentos[{data,valor,obs}],despesas[{data,valor,desc}]}
+  nextId:1
+};
+let view='dash', calOff=0, _fotos=[], _fotos2=[];
+
+function sv(){localStorage.setItem('lf2',JSON.stringify(S));}
+function nid(){return S.nextId++;}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+const R=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const FD=s=>{if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;};
+const TD=()=>new Date().toISOString().split('T')[0];
+const MO=s=>s?s.slice(0,7):'';
+const CM=()=>new Date().toISOString().slice(0,7);
+
+const gc=id=>S.clientes.find(x=>x.id===Number(id));
+const gi=id=>S.imoveis.find(x=>x.id===Number(id));
+const git=id=>S.itens.find(x=>x.id===Number(id));
+const gct=id=>S.contratos.find(x=>x.id===Number(id));
+
+function diffDias(a,b){return Math.round((new Date(b)-new Date(a))/(86400000));}
+
+function totalPagoC(c){return(c.pagamentos||[]).reduce((s,p)=>s+Number(p.valor),0);}
+function totalDespC(c){return(c.despesas||[]).reduce((s,d)=>s+Number(d.valor),0);}
+function lucroC(c){return totalPagoC(c)-totalDespC(c);}
+
+function contratosAtivos(refId,tipo){return S.contratos.filter(c=>c.refId===Number(refId)&&c.tipo===tipo&&c.status==='ativo');}
+function contratoAtivoImovel(refId){const a=contratosAtivos(refId,'imovel');return a.length>0?a[0]:null;}
+
+function pagoMesAtual(contratoId){
+  const c=gct(contratoId); if(!c) return false;
+  return (c.pagamentos||[]).some(p=>MO(p.data)===CM());
+}
+
+function isVencidoHoje(c){
+  if(c.tipo!=='imovel'||c.status!=='ativo') return false;
+  const dia=new Date().getDate();
+  return c.periodo===dia&&!pagoMesAtual(c.id);
+}
+
+function ocupacaoPct(refId,tipo){
+  const cts=S.contratos.filter(c=>c.refId===Number(refId)&&c.tipo===tipo);
+  if(cts.length===0) return 0;
+  const inicio=cts.reduce((mn,c)=>c.dataInicio<mn?c.dataInicio:mn,cts[0].dataInicio);
+  const totalDias=diffDias(inicio,TD());
+  if(totalDias<=0) return 0;
+  const ocupDias=cts.reduce((s,c)=>{
+    const fim=c.dataFim&&c.dataFim<TD()?c.dataFim:TD();
+    return s+Math.max(0,diffDias(c.dataInicio,fim));
+  },0);
+  return Math.min(100,Math.round(ocupDias/totalDias*100));
+}
+
+function avt(c,sz=40){
+  if(c?.foto) return `<img src="${c.foto}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;border:2px solid #141e38;flex-shrink:0"/>`;
+  const l=c?.nome?.[0]?.toUpperCase()||'?';
+  return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#0d3022;color:#18a558;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${Math.round(sz*.38)}px;flex-shrink:0">${l}</div>`;
+}
+
+function bdg(st){
+  const m={ativo:'bg Ativo',encerrado:'bgr Encerrado',disponivel:'bb Disponível',ocupado:'by Em uso',manutencao:'br Manutenção',atrasado:'br Atrasado',pago:'bg Pago'};
+  const[cls,lb]=(m[st]||'bgr '+st).split(' ');
+  return `<span class="bdg ${cls}">${lb}</span>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════════════════
+function tick(){
+  const d=new Date();
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  document.getElementById('htime').textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('hdate').textContent=`${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]}`;
+}
+
+// ══════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════
+function go(v){
+  view=v;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('t-'+v)?.classList.add('active');
+  render();
+}
+function render(){
+  const el=document.getElementById('app');
+  if(view==='dash') el.innerHTML=renderDash();
+  else if(view==='imoveis') el.innerHTML=renderImoveis();
+  else if(view==='itens') el.innerHTML=renderItens();
+  else if(view==='clientes') el.innerHTML=renderClientes();
+  else if(view==='fin') el.innerHTML=renderFin();
+}
+
+// ══════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════
+function renderDash(){
+  const m=CM();
+  const ctAtivos=S.contratos.filter(c=>c.status==='ativo');
+  const imOcup=S.imoveis.filter(im=>im.status==='ocupado').length;
+  const itOcup=S.itens.filter(it=>it.status==='ocupado').length;
+  const recMes=S.contratos.reduce((s,c)=>{return s+(c.pagamentos||[]).filter(p=>MO(p.data)===m).reduce((a,p)=>a+Number(p.valor),0);},0);
+  const despMes=S.contratos.reduce((s,c)=>{return s+(c.despesas||[]).filter(d=>MO(d.data)===m).reduce((a,d)=>a+Number(d.valor),0);},0);
+  const aRecMes=ctAtivos.filter(c=>c.tipo==='imovel').reduce((s,c)=>s+(pagoMesAtual(c.id)?0:Number(c.valor)),0);
+  const atrasados=ctAtivos.filter(c=>isVencidoHoje(c));
+  const valorAt=atrasados.reduce((s,c)=>s+Number(c.valor),0);
+
+  // calendário
+  const calD=new Date(); calD.setDate(calD.getDate()+calOff);
+  const calStr=calD.toISOString().split('T')[0];
+  const calDayNum=calD.getDate();
+  const dias2=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses2=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const calLabel=`${dias2[calD.getDay()]}, ${calD.getDate()} de ${meses2[calD.getMonth()]}`;
+  const calNome=calOff===0?'Hoje':calOff===1?'Amanhã':calOff===-1?'Ontem':calLabel;
+  const vencCal=S.contratos.filter(c=>c.status==='ativo'&&c.tipo==='imovel'&&c.periodo===calDayNum);
+  const devCal=S.contratos.filter(c=>c.status==='ativo'&&c.tipo==='item'&&c.dataFim===calStr);
+
+  const stats=[
+    {ic:'💰',lb:'Recebido no Mês',vl:R(recMes),cl:'#18a558',bg:'#071410'},
+    {ic:'📅',lb:'A Receber no Mês',vl:R(aRecMes),cl:'#4f8ef7',bg:'#070e20'},
+    {ic:'🏘️',lb:'Imóveis Ocupados',vl:imOcup+'/'+S.imoveis.length,cl:'#a78bfa',bg:'#0e0720'},
+    {ic:'📦',lb:'Itens em Uso',vl:itOcup+'/'+S.itens.length,cl:'#fbbf24',bg:'#1a0f02'},
+    {ic:'📈',lb:'Lucro do Mês',vl:R(recMes-despMes),cl:recMes-despMes>=0?'#18a558':'#f87171',bg:'#071410'},
+    {ic:'⚠️',lb:'Em Atraso',vl:R(valorAt),cl:'#f87171',bg:'#1a0505'},
+  ];
+
+  const recent=[...S.contratos.filter(c=>c.status==='ativo')].slice(-4).reverse();
+
+  return `
+  <div class="sg">
+    ${stats.map(s=>`<div class="sc"><div class="sc-ic" style="background:${s.bg}">${s.ic}</div><div class="sc-lb">${s.lb}</div><div class="sc-vl" style="color:${s.cl}">${s.vl}</div></div>`).join('')}
+  </div>
+
+  <div class="card card-p" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <button class="bg2" style="width:30px;height:30px;padding:0;font-size:16px" onclick="calOff--;render()">‹</button>
+      <div style="text-align:center">
+        <div style="font-weight:800;font-size:14px;color:#18a558">${calNome}</div>
+        <div style="font-size:10px;color:#4a5880">${calLabel}</div>
+      </div>
+      <button class="bg2" style="width:30px;height:30px;padding:0;font-size:16px" onclick="calOff++;render()">›</button>
+    </div>
+    ${vencCal.length===0&&devCal.length===0?'<div style="text-align:center;color:#2e3a58;padding:14px;font-size:12px">Nenhum vencimento neste dia</div>':
+    [...vencCal.map(c=>{const cl=gc(c.clienteId);const im=gi(c.refId);return`
+      <div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #141e3833">
+        <div style="width:8px;height:8px;border-radius:50%;background:#18a558;flex-shrink:0"></div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600">${cl?.nome||'?'}</div><div style="font-size:10px;color:#4a5880">Aluguel · ${im?.endereco||'?'}</div></div>
+        <div style="font-weight:800;font-size:13px;color:#18a558">${R(c.valor)}</div>
+      </div>`;}),
+    ...devCal.map(c=>{const cl=gc(c.clienteId);const it=git(c.refId);return`
+      <div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #141e3833">
+        <div style="width:8px;height:8px;border-radius:50%;background:#fbbf24;flex-shrink:0"></div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600">${cl?.nome||'?'}</div><div style="font-size:10px;color:#4a5880">Devolução · ${it?.nome||'?'}</div></div>
+        <div style="font-weight:800;font-size:13px;color:#fbbf24">${R(c.valor)}</div>
+      </div>`})].join('')}
+  </div>
+
+  <div class="st">CONTRATOS ATIVOS</div>
+  ${recent.length===0?`<div class="empty"><div class="empty-ic">📋</div><div class="empty-tx">Nenhum contrato ativo ainda</div></div>`:
+  recent.map(c=>{
+    const cl=gc(c.clienteId);
+    const ref=c.tipo==='imovel'?gi(c.refId):git(c.refId);
+    const at=isVencidoHoje(c);
+    return`<div class="li ${at?'red':''}" onclick="openContrato(${c.id})">
+      <div class="li-row">
+        <div class="li-ic" style="background:${c.tipo==='imovel'?'#071410':'#1a0f02'}">${c.tipo==='imovel'?'🏠':'📦'}</div>
+        <div class="li-info">
+          <div class="li-name">${ref?.endereco||ref?.nome||'?'}</div>
+          <div class="li-sub">${cl?.nome||'?'} · ${c.tipo==='imovel'?'Vence dia '+c.periodo:'Dev. '+FD(c.dataFim)}</div>
+        </div>
+        <div class="li-right"><div class="li-val" style="color:#18a558">${R(c.valor)}</div>${bdg(at?'atrasado':'ativo')}</div>
+      </div>
+    </div>`;}).join('')}
+  <div style="height:20px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  IMÓVEIS
+// ══════════════════════════════════════════════════════
+function renderImoveis(){
+  const grupos=[
+    {st:'ocupado',lb:'🟡 OCUPADOS',ic:'by'},
+    {st:'disponivel',lb:'🟢 DISPONÍVEIS',ic:'bb'},
+    {st:'manutencao',lb:'🔧 MANUTENÇÃO',ic:'br'},
+  ];
+  return`
+  <div class="sh"><h2>Imóveis</h2><button class="bg2" onclick="openNovoImovel()">+ Novo</button></div>
+  ${S.imoveis.length===0?`<div class="empty"><div class="empty-ic">🏘️</div><div class="empty-tx">Nenhum imóvel cadastrado</div></div>`:
+  grupos.map(g=>{
+    const items=S.imoveis.filter(im=>im.status===g.st);
+    if(items.length===0) return'';
+    return`<div class="st">${g.lb}</div>`+items.map(im=>{
+      const ct=contratoAtivoImovel(im.id);
+      const cl=ct?gc(ct.clienteId):null;
+      const ocp=ocupacaoPct(im.id,'imovel');
+      const totalRec=S.contratos.filter(c=>c.refId===im.id&&c.tipo==='imovel').reduce((s,c)=>s+totalPagoC(c),0);
+      const at=ct&&isVencidoHoje(ct);
+      return`<div class="li ${at?'red':''}" onclick="openImovel(${im.id})">
+        <div class="li-row">
+          <div class="li-ic" style="background:#071410">🏠</div>
+          <div class="li-info">
+            <div class="tt">${im.tipo}</div>
+            <div class="li-name">${im.endereco}</div>
+            <div class="li-sub">${cl?cl.nome:'Sem inquilino'} ${ct?'· Vence dia '+ct.periodo:''}</div>
+          </div>
+          <div class="li-right"><div class="li-val" style="color:#18a558">${ct?R(ct.valor):'—'}</div>${bdg(at?'atrasado':im.status)}</div>
+        </div>
+        <div class="pb"><div class="pf" style="width:${ocp}%;background:#18a558"></div></div>
+        <div class="pl"><span>Taxa de ocupação: ${ocp}%</span><span>Total recebido: ${R(totalRec)}</span></div>
+      </div>`;}).join('');}).join('')}
+  <div style="height:20px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  ITENS
+// ══════════════════════════════════════════════════════
+function renderItens(){
+  const grupos=[
+    {st:'ocupado',lb:'🟡 EM USO'},
+    {st:'disponivel',lb:'🟢 DISPONÍVEIS'},
+    {st:'manutencao',lb:'🔧 MANUTENÇÃO'},
+  ];
+  return`
+  <div class="sh"><h2>Itens / Objetos</h2><button class="bg2" onclick="openNovoItem()">+ Novo</button></div>
+  ${S.itens.length===0?`<div class="empty"><div class="empty-ic">📦</div><div class="empty-tx">Nenhum item cadastrado</div></div>`:
+  grupos.map(g=>{
+    const items=S.itens.filter(it=>it.status===g.st);
+    if(items.length===0) return'';
+    return`<div class="st">${g.lb}</div>`+items.map(it=>{
+      const ctsAtivos=contratosAtivos(it.id,'item');
+      const qtdEmUso=ctsAtivos.length;
+      const totalRec=S.contratos.filter(c=>c.refId===it.id&&c.tipo==='item').reduce((s,c)=>s+totalPagoC(c),0);
+      const ocp=ocupacaoPct(it.id,'item');
+      return`<div class="li" onclick="openItem(${it.id})">
+        <div class="li-row">
+          <div class="li-ic" style="background:#1a0f02">📦</div>
+          <div class="li-info">
+            <div class="tt">${it.categoria}</div>
+            <div class="li-name">${it.nome}</div>
+            <div class="li-sub">${qtdEmUso} de ${it.qtdTotal} em uso</div>
+          </div>
+          <div class="li-right">
+            <span class="est-badge">${it.qtdTotal-qtdEmUso} disp.</span>
+            <div class="li-meta">Total: ${R(totalRec)}</div>
+          </div>
+        </div>
+        ${ocp>0?`<div class="pb" style="margin-top:8px"><div class="pf" style="width:${ocp}%;background:#fbbf24"></div></div>
+        <div class="pl"><span>Taxa de uso: ${ocp}%</span></div>`:''}
+      </div>`;}).join('');}).join('')}
+  <div style="height:20px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  CLIENTES
+// ══════════════════════════════════════════════════════
+function renderClientes(){
+  return`
+  <div class="sh"><h2>Clientes</h2><button class="bg2" onclick="openNovoCliente()">+ Novo</button></div>
+  ${S.clientes.length===0?`<div class="empty"><div class="empty-ic">👥</div><div class="empty-tx">Nenhum cliente cadastrado</div></div>`:
+  S.clientes.map(c=>{
+    const cts=S.contratos.filter(ct=>ct.clienteId===c.id&&ct.status==='ativo');
+    const totalRec=S.contratos.filter(ct=>ct.clienteId===c.id).reduce((s,ct)=>s+totalPagoC(ct),0);
+    return`<div class="li" onclick="openCliente(${c.id})">
+      <div class="li-row">
+        ${avt(c,44)}
+        <div class="li-info"><div class="li-name">${c.nome}</div><div class="li-sub">${c.telefone}</div></div>
+        <div class="li-right"><div class="li-val" style="color:#18a558">${R(totalRec)}</div><div class="li-meta">${cts.length} ativo(s)</div></div>
+      </div>
+    </div>`;}).join('')}
+  <div style="height:20px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  FINANCEIRO
+// ══════════════════════════════════════════════════════
+function renderFin(){
+  const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const now=new Date();
+  const hist=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const rec=S.contratos.reduce((s,c)=>s+(c.pagamentos||[]).filter(p=>MO(p.data)===mk).reduce((a,p)=>a+Number(p.valor),0),0);
+    const desp=S.contratos.reduce((s,c)=>s+(c.despesas||[]).filter(d2=>MO(d2.data)===mk).reduce((a,d2)=>a+Number(d2.valor),0),0);
+    hist.push({lb:meses[d.getMonth()],rec,desp,lucro:rec-desp});
+  }
+  const maxV=Math.max(...hist.map(h=>h.rec),1);
+  const m=CM();
+  const recMes=S.contratos.reduce((s,c)=>s+(c.pagamentos||[]).filter(p=>MO(p.data)===m).reduce((a,p)=>a+Number(p.valor),0),0);
+  const despMes=S.contratos.reduce((s,c)=>s+(c.despesas||[]).filter(d=>MO(d.data)===m).reduce((a,d)=>a+Number(d.valor),0),0);
+  const totalRec=S.contratos.reduce((s,c)=>s+totalPagoC(c),0);
+  const totalDesp=S.contratos.reduce((s,c)=>s+totalDespC(c),0);
+
+  // Ranking imóveis
+  const rankIm=S.imoveis.map(im=>{
+    const rec=S.contratos.filter(c=>c.refId===im.id&&c.tipo==='imovel').reduce((s,c)=>s+totalPagoC(c),0);
+    return{nome:im.endereco,rec};
+  }).sort((a,b)=>b.rec-a.rec).slice(0,3);
+
+  const rankIt=S.itens.map(it=>{
+    const rec=S.contratos.filter(c=>c.refId===it.id&&c.tipo==='item').reduce((s,c)=>s+totalPagoC(c),0);
+    return{nome:it.nome,rec};
+  }).sort((a,b)=>b.rec-a.rec).slice(0,3);
+
+  const ultPag=[...S.contratos.flatMap(c=>(c.pagamentos||[]).map(p=>({...p,ref:c.tipo==='imovel'?gi(c.refId)?.endereco:git(c.refId)?.nome})))].sort((a,b)=>b.data?.localeCompare(a.data)).slice(0,5);
+  const ultDesp=[...S.contratos.flatMap(c=>(c.despesas||[]).map(d=>({...d,ref:c.tipo==='imovel'?gi(c.refId)?.endereco:git(c.refId)?.nome})))].sort((a,b)=>b.data?.localeCompare(a.data)).slice(0,5);
+
+  return`
+  <div class="sh"><h2>Financeiro</h2></div>
+  <div class="sg" style="margin-bottom:14px">
+    <div class="sc"><div class="sc-ic" style="background:#071410">💰</div><div class="sc-lb">Recebido no Mês</div><div class="sc-vl" style="color:#18a558">${R(recMes)}</div></div>
+    <div class="sc"><div class="sc-ic" style="background:#1a0505">💸</div><div class="sc-lb">Despesas no Mês</div><div class="sc-vl" style="color:#f87171">${R(despMes)}</div></div>
+    <div class="sc"><div class="sc-ic" style="background:#071410">📈</div><div class="sc-lb">Lucro do Mês</div><div class="sc-vl" style="color:${recMes-despMes>=0?'#18a558':'#f87171'}">${R(recMes-despMes)}</div></div>
+    <div class="sc"><div class="sc-ic" style="background:#071410">🏦</div><div class="sc-lb">Total Recebido</div><div class="sc-vl" style="color:#18a558">${R(totalRec)}</div></div>
+  </div>
+
+  <div class="dc" style="margin-bottom:13px">
+    <div class="st" style="margin-top:0">RECEITA ÚLTIMOS 6 MESES</div>
+    <div class="chart-bars">
+      ${hist.map(h=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center"><div class="chart-bar" style="width:100%;background:linear-gradient(180deg,#18a558,#0d5c32);height:${Math.max(4,h.rec/maxV*70)}px"></div><div class="chart-label">${h.lb}</div></div>`).join('')}
+    </div>
+  </div>
+
+  ${rankIm.length>0?`
+  <div class="dc" style="margin-bottom:13px">
+    <div class="st" style="margin-top:0">🏠 IMÓVEIS QUE MAIS RENDERAM</div>
+    ${rankIm.map((r,i)=>`<div class="dr"><span class="dl">${i+1}. ${r.nome}</span><span class="dv" style="color:#18a558">${R(r.rec)}</span></div>`).join('')}
+  </div>`:''}
+
+  ${rankIt.length>0?`
+  <div class="dc" style="margin-bottom:13px">
+    <div class="st" style="margin-top:0">📦 ITENS QUE MAIS RENDERAM</div>
+    ${rankIt.map((r,i)=>`<div class="dr"><span class="dl">${i+1}. ${r.nome}</span><span class="dv" style="color:#fbbf24">${R(r.rec)}</span></div>`).join('')}
+  </div>`:''}
+
+  <div class="dc" style="margin-bottom:13px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="st" style="margin:0">ÚLTIMOS RECEBIMENTOS</div>
+    </div>
+    ${ultPag.length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:10px">Nenhum recebimento</div>':
+    ultPag.map(p=>`<div class="dr"><div><div style="font-size:12px;font-weight:600">${p.ref||'—'}</div><div style="font-size:10px;color:#4a5880">${p.obs||'Pagamento'} · ${FD(p.data)}</div></div><div style="color:#18a558;font-weight:800;font-size:13px">${R(p.valor)}</div></div>`).join('')}
+  </div>
+
+  <div class="dc">
+    <div class="st" style="margin-top:0">ÚLTIMAS DESPESAS</div>
+    ${ultDesp.length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:10px">Nenhuma despesa</div>':
+    ultDesp.map(d=>`<div class="dr"><div><div style="font-size:12px;font-weight:600">${d.ref||'—'}</div><div style="font-size:10px;color:#4a5880">${d.desc||'Despesa'} · ${FD(d.data)}</div></div><div style="color:#f87171;font-weight:800;font-size:13px">-${R(d.valor)}</div></div>`).join('')}
+  </div>
+  <div style="height:20px"></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL: CLIENTE
+// ══════════════════════════════════════════════════════
+let _fp=null;
+function openNovoCliente(){
+  _fp=null;
+  openModal(`<div class="mt">Novo cliente</div>
+    <div style="display:flex;justify-content:center;margin-bottom:14px">
+      <label style="cursor:pointer;position:relative">
+        <div id="ap" style="width:72px;height:72px;border-radius:50%;background:#0d3022;color:#18a558;display:flex;align-items:center;justify-content:center;font-size:30px;border:2px solid #141e38">👤</div>
+        <div style="position:absolute;bottom:0;right:0;background:#18a558;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px">✏️</div>
+        <input type="file" accept="image/*" onchange="hFoto(event)" style="display:none"/>
+      </label>
+    </div>
+    <div class="f"><label>NOME COMPLETO *</label><input id="c-nome" placeholder="João Silva"/></div>
+    <div class="f"><label>TELEFONE *</label><input id="c-tel" placeholder="11 99999-0000" type="tel"/></div>
+    <div class="fr">
+      <div class="f"><label>CPF / CNPJ</label><input id="c-doc" placeholder="000.000.000-00"/></div>
+      <div class="f"><label>E-MAIL</label><input id="c-email" placeholder="email@..." type="email"/></div>
+    </div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="c-obs" placeholder="Informações adicionais..."></textarea></div>
+    <button class="bp" onclick="svCliente()">Cadastrar cliente</button>`);
+}
+function hFoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{_fp=ev.target.result;document.getElementById('ap').innerHTML=`<img src="${_fp}" style="width:72px;height:72px;border-radius:50%;object-fit:cover"/>`;};r.readAsDataURL(f);
+}
+function svCliente(id){
+  const nome=document.getElementById('c-nome').value.trim();
+  const tel=document.getElementById('c-tel').value.trim();
+  if(!nome||!tel){toast('Preencha nome e telefone');return;}
+  const obj={nome,telefone:tel,cpf:document.getElementById('c-doc').value.trim(),email:document.getElementById('c-email').value.trim(),obs:document.getElementById('c-obs').value.trim(),foto:_fp};
+  if(id){S.clientes=S.clientes.map(x=>x.id===Number(id)?{...x,...obj}:x);}
+  else S.clientes.push({id:nid(),...obj});
+  sv();closeModal();render();toast('Cliente salvo ✓');
+}
+function openCliente(id){
+  const c=gc(id);
+  const cts=S.contratos.filter(ct=>ct.clienteId===id);
+  const totalRec=cts.reduce((s,ct)=>s+totalPagoC(ct),0);
+  openModal(`
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px">
+      ${avt(c,54)}
+      <div><div style="font-weight:800;font-size:17px">${c.nome}</div>
+      <div style="color:#4a5880;font-size:12px">${c.telefone}</div>
+      ${c.cpf?`<div style="color:#4a5880;font-size:11px">${c.cpf}</div>`:''}
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-bottom:14px">
+      <button class="bg2" style="flex:1" onclick="editCliente(${id})">✏️ Editar</button>
+      <button class="bp" style="flex:1;padding:10px;font-size:12px" onclick="closeModal();setTimeout(()=>openNovoContrato('imovel',null,${id}),80)">+ Contrato</button>
+    </div>
+    <div class="sb"><div class="sbt">TOTAL PAGO POR ESTE CLIENTE</div><div style="font-size:22px;font-weight:900;color:#18a558">${R(totalRec)}</div></div>
+    <div class="st">CONTRATOS (${cts.length})</div>
+    ${cts.length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:10px">Nenhum contrato</div>':
+    cts.map(ct=>{
+      const ref=ct.tipo==='imovel'?gi(ct.refId):git(ct.refId);
+      return`<div class="li" onclick="closeModal();setTimeout(()=>openContrato(${ct.id}),80)">
+        <div class="li-row">
+          <div class="li-ic" style="background:${ct.tipo==='imovel'?'#071410':'#1a0f02'};font-size:16px">${ct.tipo==='imovel'?'🏠':'📦'}</div>
+          <div class="li-info"><div class="li-name">${ref?.endereco||ref?.nome||'?'}</div><div class="li-sub">${FD(ct.dataInicio)} → ${ct.dataFim?FD(ct.dataFim):'Em aberto'}</div></div>
+          <div class="li-right"><div class="li-val" style="color:#18a558">${R(totalPagoC(ct))}</div>${bdg(ct.status)}</div>
+        </div>
+      </div>`;}).join('')}
+    <button class="bd" onclick="delCliente(${id})">🗑 Excluir cliente</button>`);
+}
+function editCliente(id){
+  const c=gc(id);_fp=c.foto||null;
+  openModal(`<div class="mt">Editar cliente</div>
+    <div style="display:flex;justify-content:center;margin-bottom:14px">
+      <label style="cursor:pointer;position:relative">
+        <div id="ap">${avt(c,72)}</div>
+        <div style="position:absolute;bottom:0;right:0;background:#18a558;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px">✏️</div>
+        <input type="file" accept="image/*" onchange="hFoto(event)" style="display:none"/>
+      </label>
+    </div>
+    <div class="f"><label>NOME *</label><input id="c-nome" value="${c.nome}"/></div>
+    <div class="f"><label>TELEFONE *</label><input id="c-tel" value="${c.telefone}" type="tel"/></div>
+    <div class="fr">
+      <div class="f"><label>CPF / CNPJ</label><input id="c-doc" value="${c.cpf||''}"/></div>
+      <div class="f"><label>E-MAIL</label><input id="c-email" value="${c.email||''}" type="email"/></div>
+    </div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="c-obs">${c.obs||''}</textarea></div>
+    <button class="bp" onclick="svCliente(${id})">Salvar alterações</button>`);
+}
+function delCliente(id){
+  if(!confirm('Excluir este cliente?')) return;
+  S.clientes=S.clientes.filter(x=>x.id!==Number(id));
+  sv();closeModal();render();toast('Cliente excluído');
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL: IMÓVEL
+// ══════════════════════════════════════════════════════
+function openNovoImovel(){
+  _fotos=[];
+  openModal(`<div class="mt">Novo imóvel</div>
+    <div class="f"><label>ENDEREÇO *</label><input id="im-end" placeholder="Rua, número, bairro, cidade"/></div>
+    <div class="fr">
+      <div class="f"><label>TIPO</label><select id="im-tipo"><option>Casa</option><option>Apartamento</option><option>Sala Comercial</option><option>Galpão</option><option>Terreno</option><option>Outro</option></select></div>
+      <div class="f"><label>STATUS</label><select id="im-st"><option value="disponivel">Disponível</option><option value="manutencao">Manutenção</option></select></div>
+    </div>
+    <div class="f"><label>DESCRIÇÃO</label><textarea id="im-desc" placeholder="Detalhes do imóvel, metragem, cômodos..."></textarea></div>
+    <div class="f"><label>FOTOS DO IMÓVEL</label>
+      <div class="pg" id="fg">
+        <label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fotos','fg')" style="display:none"/></label>
+      </div>
+    </div>
+    <button class="bp" onclick="svImovel()">Cadastrar imóvel</button>`);
+}
+function hFotos(e,arr,gridId){
+  [...e.target.files].forEach(f=>{const r=new FileReader();r.onload=ev=>{window[arr].push(ev.target.result);renderFg(arr,gridId);};r.readAsDataURL(f);});
+}
+function renderFg(arr,gid){
+  const g=document.getElementById(gid);if(!g)return;
+  g.innerHTML=window[arr].map((f,i)=>`<img src="${f}" class="pt" onclick="window['${arr}'].splice(${i},1);renderFg('${arr}','${gid}')"/>`).join('')+
+    `<label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'${arr}','${gid}')" style="display:none"/></label>`;
+}
+function svImovel(id){
+  const end=document.getElementById('im-end').value.trim();
+  if(!end){toast('Informe o endereço');return;}
+  const obj={endereco:end,tipo:document.getElementById('im-tipo').value,status:document.getElementById('im-st').value,descricao:document.getElementById('im-desc').value.trim(),fotos:[..._fotos]};
+  if(id){S.imoveis=S.imoveis.map(x=>x.id===Number(id)?{...x,...obj}:x);}
+  else S.imoveis.push({id:nid(),...obj});
+  sv();closeModal();render();toast('Imóvel salvo ✓');
+}
+function openImovel(id){
+  const im=gi(id);
+  const cts=S.contratos.filter(c=>c.refId===id&&c.tipo==='imovel');
+  const ctAtivo=cts.find(c=>c.status==='ativo');
+  const totalRec=cts.reduce((s,c)=>s+totalPagoC(c),0);
+  const totalDesp=cts.reduce((s,c)=>s+totalDespC(c),0);
+  const ocp=ocupacaoPct(id,'imovel');
+
+  openModal(`
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+      <div style="width:46px;height:46px;border-radius:13px;background:#071410;display:flex;align-items:center;justify-content:center;font-size:22px">🏠</div>
+      <div style="flex:1"><div class="tt">${im.tipo}</div><div style="font-weight:800;font-size:16px">${im.endereco}</div></div>
+      ${bdg(im.status)}
+    </div>
+
+    <div class="sb">
+      <div class="sbt">RESUMO FINANCEIRO</div>
+      <div class="dr"><span class="dl">Total recebido</span><span class="dv" style="color:#18a558">${R(totalRec)}</span></div>
+      <div class="dr"><span class="dl">Total em despesas</span><span class="dv" style="color:#f87171">-${R(totalDesp)}</span></div>
+      <div class="dr"><span class="dl">Lucro líquido</span><span class="dv" style="color:${totalRec-totalDesp>=0?'#18a558':'#f87171'};font-weight:900;font-size:15px">${R(totalRec-totalDesp)}</span></div>
+      <div class="dr"><span class="dl">Taxa de ocupação</span><span class="dv">${ocp}%</span></div>
+    </div>
+
+    ${im.descricao?`<div style="background:#141e38;border-radius:10px;padding:10px;font-size:12px;color:#8890b0;margin-bottom:11px">${im.descricao}</div>`:''}
+
+    ${im.fotos?.length>0?`<div class="st">FOTOS</div><div class="pg" style="margin-bottom:12px">${im.fotos.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+
+    <div class="st">HISTÓRICO DE CONTRATOS (${cts.length})</div>
+    ${cts.length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:10px">Nenhum contrato ainda</div>':
+    cts.map((c,i)=>{
+      const cl=gc(c.clienteId);
+      const last=i===cts.length-1;
+      return`<div class="tl-item">
+        <div class="tl-dot">
+          <div class="tl-circle" style="background:${c.status==='ativo'?'#18a558':'#2e3a58'}"></div>
+          ${!last?'<div class="tl-line"></div>':''}
+        </div>
+        <div class="tl-content" onclick="openContrato(${c.id})" style="cursor:pointer">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="tl-name">${cl?.nome||'?'}</div>${bdg(c.status)}
+          </div>
+          <div class="tl-period">${FD(c.dataInicio)} → ${c.dataFim?FD(c.dataFim):'Atual'}</div>
+          <div class="tl-val">${R(totalPagoC(c))} recebidos</div>
+        </div>
+      </div>`;}).join('')}
+
+    <div style="display:flex;gap:7px;margin-bottom:9px">
+      <button class="bp" style="flex:1" onclick="closeModal();setTimeout(()=>openNovoContrato('imovel',${id}),80)">+ Novo contrato</button>
+      <button class="bg2" style="flex:1" onclick="editImovel(${id})">✏️ Editar</button>
+    </div>
+    <button class="bd" onclick="delImovel(${id})">🗑 Excluir imóvel</button>`);
+}
+function editImovel(id){
+  const im=gi(id);_fotos=[...(im.fotos||[])];
+  openModal(`<div class="mt">Editar imóvel</div>
+    <div class="f"><label>ENDEREÇO *</label><input id="im-end" value="${im.endereco}"/></div>
+    <div class="fr">
+      <div class="f"><label>TIPO</label><select id="im-tipo">${['Casa','Apartamento','Sala Comercial','Galpão','Terreno','Outro'].map(t=>`<option ${t===im.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="f"><label>STATUS</label><select id="im-st"><option value="disponivel" ${im.status==='disponivel'?'selected':''}>Disponível</option><option value="ocupado" ${im.status==='ocupado'?'selected':''}>Ocupado</option><option value="manutencao" ${im.status==='manutencao'?'selected':''}>Manutenção</option></select></div>
+    </div>
+    <div class="f"><label>DESCRIÇÃO</label><textarea id="im-desc">${im.descricao||''}</textarea></div>
+    <div class="f"><label>FOTOS</label><div class="pg" id="fg">${_fotos.map((f,i)=>`<img src="${f}" class="pt" onclick="_fotos.splice(${i},1);renderFg('_fotos','fg')"/>`).join('')}<label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fotos','fg')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svImovel(${id})">Salvar alterações</button>`);
+}
+function delImovel(id){
+  if(!confirm('Excluir este imóvel e todos os contratos?')) return;
+  S.imoveis=S.imoveis.filter(x=>x.id!==Number(id));
+  S.contratos=S.contratos.filter(c=>!(c.refId===Number(id)&&c.tipo==='imovel'));
+  sv();closeModal();render();toast('Imóvel excluído');
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL: ITEM
+// ══════════════════════════════════════════════════════
+const CATS=['Ferramenta','Equipamento de Festa','Móvel / Decoração','Veículo','Eletrônico','Esporte / Lazer','Entretenimento','Outro'];
+function openNovoItem(){
+  _fotos=[];
+  openModal(`<div class="mt">Novo item / objeto</div>
+    <div class="f"><label>CATEGORIA *</label><select id="it-cat">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    <div class="f"><label>NOME DO ITEM *</label><input id="it-nome" placeholder="Ex: Betoneira, Mesa de Sinuca, Cadeiras..."/></div>
+    <div class="fr">
+      <div class="f"><label>QUANTIDADE TOTAL</label><input type="number" id="it-qtd" value="1" min="1"/></div>
+      <div class="f"><label>STATUS</label><select id="it-st"><option value="disponivel">Disponível</option><option value="manutencao">Manutenção</option></select></div>
+    </div>
+    <div class="f"><label>DESCRIÇÃO</label><textarea id="it-desc" placeholder="Estado, características, observações..."></textarea></div>
+    <div class="f"><label>FOTOS DO ITEM</label><div class="pg" id="fg"><label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fotos','fg')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svItem()">Cadastrar item</button>`);
+}
+function svItem(id){
+  const nome=document.getElementById('it-nome').value.trim();
+  if(!nome){toast('Informe o nome do item');return;}
+  const obj={nome,categoria:document.getElementById('it-cat').value,qtdTotal:Number(document.getElementById('it-qtd').value)||1,status:document.getElementById('it-st').value,descricao:document.getElementById('it-desc').value.trim(),fotos:[..._fotos]};
+  if(id){S.itens=S.itens.map(x=>x.id===Number(id)?{...x,...obj}:x);}
+  else S.itens.push({id:nid(),...obj});
+  sv();closeModal();render();toast('Item salvo ✓');
+}
+function openItem(id){
+  const it=git(id);
+  const cts=S.contratos.filter(c=>c.refId===id&&c.tipo==='item');
+  const ctsAtivos=cts.filter(c=>c.status==='ativo');
+  const totalRec=cts.reduce((s,c)=>s+totalPagoC(c),0);
+  const ocp=ocupacaoPct(id,'item');
+  const qtdDisp=it.qtdTotal-ctsAtivos.length;
+
+  openModal(`
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+      <div style="width:46px;height:46px;border-radius:13px;background:#1a0f02;display:flex;align-items:center;justify-content:center;font-size:22px">📦</div>
+      <div style="flex:1"><div class="tt">${it.categoria}</div><div style="font-weight:800;font-size:16px">${it.nome}</div></div>
+      ${bdg(it.status)}
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:13px">
+      <div style="flex:1;background:#0c1222;border:1px solid #141e38;border-radius:12px;padding:11px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#18a558">${qtdDisp}</div>
+        <div style="font-size:10px;color:#4a5880">Disponíveis</div>
+      </div>
+      <div style="flex:1;background:#0c1222;border:1px solid #141e38;border-radius:12px;padding:11px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#fbbf24">${ctsAtivos.length}</div>
+        <div style="font-size:10px;color:#4a5880">Em uso</div>
+      </div>
+      <div style="flex:1;background:#0c1222;border:1px solid #141e38;border-radius:12px;padding:11px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#a78bfa">${it.qtdTotal}</div>
+        <div style="font-size:10px;color:#4a5880">Total</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sbt">RESUMO FINANCEIRO</div>
+      <div class="dr"><span class="dl">Total recebido</span><span class="dv" style="color:#18a558">${R(totalRec)}</span></div>
+      <div class="dr"><span class="dl">Total de locações</span><span class="dv">${cts.length}</span></div>
+      <div class="dr"><span class="dl">Taxa de uso</span><span class="dv">${ocp}%</span></div>
+    </div>
+
+    ${it.descricao?`<div style="background:#141e38;border-radius:10px;padding:10px;font-size:12px;color:#8890b0;margin-bottom:11px">${it.descricao}</div>`:''}
+    ${it.fotos?.length>0?`<div class="st">FOTOS</div><div class="pg" style="margin-bottom:12px">${it.fotos.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+
+    <div class="st">HISTÓRICO DE LOCAÇÕES (${cts.length})</div>
+    ${cts.length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:10px">Nenhuma locação ainda</div>':
+    cts.map((c,i)=>{
+      const cl=gc(c.clienteId);
+      const last=i===cts.length-1;
+      return`<div class="tl-item">
+        <div class="tl-dot">
+          <div class="tl-circle" style="background:${c.status==='ativo'?'#fbbf24':'#2e3a58'}"></div>
+          ${!last?'<div class="tl-line"></div>':''}
+        </div>
+        <div class="tl-content" onclick="openContrato(${c.id})" style="cursor:pointer">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="tl-name">${cl?.nome||'?'}</div>${bdg(c.status)}
+          </div>
+          <div class="tl-period">${FD(c.dataInicio)} → ${c.dataFim?FD(c.dataFim):'Atual'}</div>
+          <div style="color:#fbbf24;font-weight:800;font-size:13px;margin-top:4px">${R(totalPagoC(c))}</div>
+        </div>
+      </div>`;}).join('')}
+
+    <div style="display:flex;gap:7px;margin-bottom:9px">
+      <button class="bp" style="flex:1" onclick="closeModal();setTimeout(()=>openNovoContrato('item',${id}),80)">+ Nova locação</button>
+      <button class="bg2" style="flex:1" onclick="editItem(${id})">✏️ Editar</button>
+    </div>
+    <button class="bd" onclick="delItem(${id})">🗑 Excluir item</button>`);
+}
+function editItem(id){
+  const it=git(id);_fotos=[...(it.fotos||[])];
+  openModal(`<div class="mt">Editar item</div>
+    <div class="f"><label>CATEGORIA</label><select id="it-cat">${CATS.map(c=>`<option ${c===it.categoria?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="f"><label>NOME *</label><input id="it-nome" value="${it.nome}"/></div>
+    <div class="fr">
+      <div class="f"><label>QUANTIDADE TOTAL</label><input type="number" id="it-qtd" value="${it.qtdTotal}"/></div>
+      <div class="f"><label>STATUS</label><select id="it-st"><option value="disponivel" ${it.status==='disponivel'?'selected':''}>Disponível</option><option value="ocupado" ${it.status==='ocupado'?'selected':''}>Em uso</option><option value="manutencao" ${it.status==='manutencao'?'selected':''}>Manutenção</option></select></div>
+    </div>
+    <div class="f"><label>DESCRIÇÃO</label><textarea id="it-desc">${it.descricao||''}</textarea></div>
+    <div class="f"><label>FOTOS</label><div class="pg" id="fg">${_fotos.map((f,i)=>`<img src="${f}" class="pt" onclick="_fotos.splice(${i},1);renderFg('_fotos','fg')"/>`).join('')}<label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fotos','fg')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svItem(${id})">Salvar alterações</button>`);
+}
+function delItem(id){
+  if(!confirm('Excluir este item e todos os registros?')) return;
+  S.itens=S.itens.filter(x=>x.id!==Number(id));
+  S.contratos=S.contratos.filter(c=>!(c.refId===Number(id)&&c.tipo==='item'));
+  sv();closeModal();render();toast('Item excluído');
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL: CONTRATO
+// ══════════════════════════════════════════════════════
+let _ctTipo='imovel', _ctCalc=0;
+function openNovoContrato(tipo,refId,clienteId){
+  _ctTipo=tipo||'imovel'; _ctCalc=0; _fotos=[]; _fotos2=[];
+  const imovelOpts=S.imoveis.filter(im=>im.status==='disponivel').map(im=>`<option value="${im.id}" ${Number(refId)===im.id?'selected':''}>${im.endereco}</option>`).join('');
+  const itemOpts=S.itens.map(it=>`<option value="${it.id}" ${Number(refId)===it.id?'selected':''}>${it.nome} (${it.qtdTotal-contratosAtivos(it.id,'item').length} disp.)</option>`).join('');
+  const clienteOpts=S.clientes.map(c=>`<option value="${c.id}" ${Number(clienteId)===c.id?'selected':''}>${c.nome}</option>`).join('');
+
+  openModal(`<div class="mt">Novo contrato</div>
+    <div class="vt">
+      <button class="vt-btn ${_ctTipo==='imovel'?'active':''}" onclick="swCT('imovel')">🏠 Aluguel</button>
+      <button class="vt-btn ${_ctTipo==='item'?'active':''}" onclick="swCT('item')">📦 Locação de item</button>
+    </div>
+    <div class="f"><label>${_ctTipo==='imovel'?'IMÓVEL':'ITEM'} *</label>
+      <select id="ct-ref">${_ctTipo==='imovel'?imovelOpts:itemOpts}</select>
+    </div>
+    <div class="f"><label>CLIENTE *</label>
+      <select id="ct-cli"><option value="">Selecione...</option>${clienteOpts}</select>
+    </div>
+    <div class="fr">
+      <div class="f"><label>DATA INÍCIO *</label><input type="date" id="ct-ini" value="${TD()}" oninput="calcCT()"/></div>
+      <div class="f"><label>${_ctTipo==='imovel'?'DATA FIM (opcional)':'DATA DEVOLUÇÃO *'}</label><input type="date" id="ct-fim" oninput="calcCT()"/></div>
+    </div>
+    ${_ctTipo==='imovel'?`
+    <div class="f"><label>DIA DE VENCIMENTO (mensal) *</label><input type="number" id="ct-periodo" placeholder="Ex: 5" min="1" max="31"/></div>
+    <div class="f"><label>VALOR MENSAL *</label><input type="number" id="ct-valor" placeholder="0.00" oninput="calcCT()"/></div>`:`
+    <div class="f"><label>TIPO DE COBRANÇA</label>
+      <select id="ct-tcob" onchange="calcCT()">
+        <option value="fixo">Valor fixo total</option>
+        <option value="diario">Por dia</option>
+        <option value="semanal">Por semana</option>
+        <option value="mensal">Por mês</option>
+      </select>
+    </div>
+    <div class="fr">
+      <div class="f"><label>VALOR UNITÁRIO *</label><input type="number" id="ct-valor" placeholder="0.00" oninput="calcCT()"/></div>
+      <div class="f"><label>QUANTIDADE</label><input type="number" id="ct-qtd" value="1" min="1" oninput="calcCT()"/></div>
+    </div>`}
+    <div id="ct-prev" style="display:none" class="sb"><div class="sbt">RESUMO DO CONTRATO</div><div id="ct-prev-c"></div></div>
+    <div class="f"><label>OBSERVAÇÕES</label><textarea id="ct-obs" placeholder="Condições, garantias, regras..."></textarea></div>
+    <div class="f"><label>FOTOS NA ENTREGA</label><div class="pg" id="fg"><label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fotos','fg')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svContrato()">Registrar contrato</button>`);
+}
+function swCT(t){_ctTipo=t;openNovoContrato(t);}
+function calcCT(){
+  const tipo=_ctTipo;
+  const val=Number(document.getElementById('ct-valor')?.value)||0;
+  if(!val) return;
+  const ini=document.getElementById('ct-ini')?.value;
+  const fim=document.getElementById('ct-fim')?.value;
+  const prev=document.getElementById('ct-prev');
+  const prevc=document.getElementById('ct-prev-c');
+  if(!prev) return;
+
+  if(tipo==='imovel'){
+    _ctCalc=val;
+    prev.style.display='block';
+    prevc.innerHTML=`<div class="dr"><span class="dl">Aluguel mensal</span><span class="dv" style="color:#18a558;font-weight:800">${R(val)}</span></div>`;
+    return;
+  }
+
+  const tcob=document.getElementById('ct-tcob')?.value||'fixo';
+  const qtd=Number(document.getElementById('ct-qtd')?.value)||1;
+  let total=0, desc='';
+  if(tcob==='fixo'){total=val*qtd;desc=`${qtd}x ${R(val)}`;}
+  else if(ini&&fim){
+    const dias=Math.max(1,diffDias(ini,fim));
+    if(tcob==='diario'){total=val*dias*qtd;desc=`${dias} dia(s) × ${R(val)} × ${qtd}`;}
+    else if(tcob==='semanal'){const sem=Math.ceil(dias/7);total=val*sem*qtd;desc=`${sem} semana(s) × ${R(val)} × ${qtd}`;}
+    else if(tcob==='mensal'){const mes=Math.ceil(dias/30);total=val*mes*qtd;desc=`${mes} mês(es) × ${R(val)} × ${qtd}`;}
+  } else {total=val*qtd;desc=`${qtd}x ${R(val)}`;}
+  _ctCalc=total;
+  prev.style.display='block';
+  prevc.innerHTML=`<div class="dr"><span class="dl">${desc}</span><span class="dv" style="color:#fbbf24;font-weight:800">${R(total)}</span></div>`;
+}
+function svContrato(){
+  const refId=Number(document.getElementById('ct-ref')?.value);
+  const cliId=Number(document.getElementById('ct-cli')?.value);
+  if(!refId||!cliId){toast('Selecione o '+(_ctTipo==='imovel'?'imóvel':'item')+' e o cliente');return;}
+  const ini=document.getElementById('ct-ini').value;
+  const fim=document.getElementById('ct-fim')?.value||null;
+  const val=Number(document.getElementById('ct-valor')?.value)||0;
+  if(!val){toast('Informe o valor');return;}
+  if(_ctTipo==='imovel'){
+    const periodo=Number(document.getElementById('ct-periodo')?.value);
+    if(!periodo){toast('Informe o dia de vencimento');return;}
+    S.contratos.push({id:nid(),tipo:'imovel',refId,clienteId:cliId,dataInicio:ini,dataFim:fim,valor:val,periodo,obs:document.getElementById('ct-obs').value.trim(),fotosEntrada:[..._fotos],fotosSaida:[],status:'ativo',pagamentos:[],despesas:[]});
+    S.imoveis=S.imoveis.map(x=>x.id===refId?{...x,status:'ocupado'}:x);
+  } else {
+    const qtd=Number(document.getElementById('ct-qtd')?.value)||1;
+    S.contratos.push({id:nid(),tipo:'item',refId,clienteId:cliId,dataInicio:ini,dataFim:fim,valor:_ctCalc||val,tipoCob:document.getElementById('ct-tcob')?.value||'fixo',qtd,obs:document.getElementById('ct-obs').value.trim(),fotosEntrada:[..._fotos],fotosSaida:[],status:'ativo',pagamentos:[],despesas:[]});
+    // atualiza status do item
+    const ctsAt=contratosAtivos(refId,'item').length+1;
+    const it=git(refId);
+    if(it) S.itens=S.itens.map(x=>x.id===refId?{...x,status:ctsAt>=x.qtdTotal?'ocupado':'disponivel'}:x);
+  }
+  sv();closeModal();render();toast('Contrato registrado ✓');
+}
+
+// ── DETALHE CONTRATO ──────────────────────────────────
+function openContrato(id){
+  const c=gct(id);
+  const cl=gc(c.clienteId);
+  const ref=c.tipo==='imovel'?gi(c.refId):git(c.refId);
+  const pago=totalPagoC(c);
+  const desp=totalDespC(c);
+  const rem=Math.max(0,Number(c.valor)-pago);
+  const pct=c.valor>0?Math.min(100,pago/Number(c.valor)*100):0;
+  const vencido=isVencidoHoje(c);
+
+  openModal(`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="width:44px;height:44px;border-radius:12px;background:${c.tipo==='imovel'?'#071410':'#1a0f02'};display:flex;align-items:center;justify-content:center;font-size:20px">${c.tipo==='imovel'?'🏠':'📦'}</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:15px">${ref?.endereco||ref?.nome||'?'}</div>
+        <div style="font-size:12px;color:#4a5880">${cl?.nome||'?'}</div>
+      </div>
+      ${bdg(vencido?'atrasado':c.status)}
+    </div>
+
+    ${vencido?`<div class="aviso">⚠️ Aluguel em atraso — vence todo dia ${c.periodo}</div>`:''}
+
+    <div class="sb">
+      <div class="sbt">FINANCEIRO DO CONTRATO</div>
+      ${c.tipo==='imovel'?`<div class="dr"><span class="dl">Aluguel mensal</span><span class="dv" style="color:#18a558">${R(c.valor)}</span></div>`:
+      `<div class="dr"><span class="dl">Valor total</span><span class="dv" style="color:#fbbf24">${R(c.valor)}</span></div>`}
+      <div class="dr"><span class="dl">Total pago</span><span class="dv" style="color:#18a558">${R(pago)}</span></div>
+      <div class="dr"><span class="dl">Total despesas</span><span class="dv" style="color:#f87171">-${R(desp)}</span></div>
+      <div class="dr"><span class="dl">Lucro líquido</span><span class="dv" style="color:${pago-desp>=0?'#18a558':'#f87171'};font-weight:900">${R(pago-desp)}</span></div>
+      ${c.tipo==='item'?`<div class="pb" style="margin-top:8px"><div class="pf" style="width:${pct}%;background:#fbbf24"></div></div><div class="pl"><span>${pct.toFixed(0)}% pago</span></div>`:''}
+    </div>
+
+    <div class="dc" style="margin-bottom:11px">
+      <div class="dr"><span class="dl">Início</span><span class="dv">${FD(c.dataInicio)}</span></div>
+      ${c.tipo==='imovel'?`<div class="dr"><span class="dl">Vencimento</span><span class="dv">Todo dia ${c.periodo}</span></div>`:
+      `<div class="dr"><span class="dl">Devolução prevista</span><span class="dv">${FD(c.dataFim)}</span></div>`}
+      ${c.dataFim?`<div class="dr"><span class="dl">Encerramento</span><span class="dv">${FD(c.dataFim)}</span></div>`:''}
+      ${c.obs?`<div class="dr"><span class="dl">Obs.</span><span class="dv">${c.obs}</span></div>`:''}
+    </div>
+
+    ${c.fotosEntrada?.length>0?`<div class="st">FOTOS NA ENTREGA</div><div class="pg" style="margin-bottom:11px">${c.fotosEntrada.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+    ${c.fotosSaida?.length>0?`<div class="st">FOTOS NA SAÍDA</div><div class="pg" style="margin-bottom:11px">${c.fotosSaida.map(f=>`<img src="${f}" class="pt"/>`).join('')}</div>`:''}
+
+    <div class="st">PAGAMENTOS (${(c.pagamentos||[]).length})</div>
+    <div class="dc" style="margin-bottom:11px">
+      ${(c.pagamentos||[]).length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:8px">Nenhum pagamento</div>':
+      (c.pagamentos||[]).slice(-5).reverse().map(p=>`<div class="dr"><div><div style="font-size:12px;font-weight:600">${p.obs||'Pagamento'}</div><div style="font-size:10px;color:#4a5880">${FD(p.data)}</div></div><div style="color:#18a558;font-weight:800;font-size:13px">${R(p.valor)}</div></div>`).join('')}
+    </div>
+
+    <div class="st">DESPESAS (${(c.despesas||[]).length})</div>
+    <div class="dc" style="margin-bottom:13px">
+      ${(c.despesas||[]).length===0?'<div style="text-align:center;color:#2e3a58;font-size:12px;padding:8px">Nenhuma despesa</div>':
+      (c.despesas||[]).slice(-5).reverse().map(d=>`<div class="dr"><div><div style="font-size:12px;font-weight:600">${d.desc}</div><div style="font-size:10px;color:#4a5880">${FD(d.data)}</div></div><div style="color:#f87171;font-weight:800;font-size:13px">-${R(d.valor)}</div></div>`).join('')}
+    </div>
+
+    ${c.status==='ativo'?`
+    <div style="display:flex;gap:7px;margin-bottom:9px">
+      <button class="bp" style="flex:1" onclick="openPagCt(${id})">💰 Pagamento</button>
+      <button class="by2" style="flex:1;padding:13px;margin:0;font-size:13px" onclick="openDespCt(${id})">💸 Despesa</button>
+    </div>
+    <button class="br2" onclick="openFotosSaida(${id})">📷 Fotos de saída</button>
+    <button class="bg2" style="width:100%;margin-top:8px" onclick="encerrarContrato(${id})">🔒 Encerrar contrato</button>`:''}
+    <button class="bd" onclick="delContrato(${id})">🗑 Excluir contrato</button>`);
+}
+
+function openPagCt(id){
+  const c=gct(id);
+  const sug=c.tipo==='imovel'?c.valor:Math.max(0,Number(c.valor)-totalPagoC(c));
+  openModal(`<div class="mt">Registrar pagamento</div>
+    <div class="f"><label>VALOR *</label><input type="number" id="pv" value="${Number(sug).toFixed(2)}"/></div>
+    <div class="f"><label>DATA</label><input type="date" id="pd" value="${TD()}"/></div>
+    <div class="f"><label>DESCRIÇÃO</label><input id="po" placeholder="Aluguel, parcela, entrada..."/></div>
+    <button class="bp" onclick="svPag(${id})">Confirmar pagamento</button>`);
+}
+function svPag(id){
+  const v=Number(document.getElementById('pv').value);
+  if(!v){toast('Informe o valor');return;}
+  S.contratos=S.contratos.map(c=>{
+    if(c.id!==Number(id)) return c;
+    return{...c,pagamentos:[...(c.pagamentos||[]),{id:nid(),valor:v,data:document.getElementById('pd').value,obs:document.getElementById('po')?.value||''}]};
+  });
+  sv();closeModal();render();toast('Pagamento registrado ✓');
+}
+
+function openDespCt(id){
+  openModal(`<div class="mt">Registrar despesa</div>
+    <div class="f"><label>DESCRIÇÃO *</label><input id="dd" placeholder="IPTU, reforma, manutenção..."/></div>
+    <div class="f"><label>VALOR *</label><input type="number" id="dv" placeholder="0.00"/></div>
+    <div class="f"><label>DATA</label><input type="date" id="ddt" value="${TD()}"/></div>
+    <button class="by2" onclick="svDesp(${id})">Registrar despesa</button>`);
+}
+function svDesp(id){
+  const desc=document.getElementById('dd').value.trim();
+  const v=Number(document.getElementById('dv').value);
+  if(!desc||!v){toast('Preencha descrição e valor');return;}
+  S.contratos=S.contratos.map(c=>{
+    if(c.id!==Number(id)) return c;
+    return{...c,despesas:[...(c.despesas||[]),{id:nid(),desc,valor:v,data:document.getElementById('ddt').value}]};
+  });
+  sv();closeModal();render();toast('Despesa registrada ✓');
+}
+
+function openFotosSaida(id){
+  _fotos2=[];
+  openModal(`<div class="mt">Fotos de saída</div>
+    <div class="f"><label>ADICIONAR FOTOS</label><div class="pg" id="fg2"><label class="pa"><span>📷</span><span>Adicionar</span><input type="file" accept="image/*" multiple onchange="hFotos(event,'_fotos2','fg2')" style="display:none"/></label></div></div>
+    <button class="bp" onclick="svFotosSaida(${id})">Salvar fotos</button>`);
+}
+function svFotosSaida(id){
+  S.contratos=S.contratos.map(c=>c.id===Number(id)?{...c,fotosSaida:[...(c.fotosSaida||[]),..._fotos2]}:c);
+  sv();closeModal();setTimeout(()=>openContrato(id),80);toast('Fotos salvas ✓');
+}
+
+function encerrarContrato(id){
+  if(!confirm('Encerrar este contrato?')) return;
+  const c=gct(id);
+  S.contratos=S.contratos.map(x=>x.id===Number(id)?{...x,status:'encerrado',dataFim:TD()}:x);
+  // libera imóvel ou item
+  if(c.tipo==='imovel'){
+    const outroAtivo=S.contratos.some(x=>x.id!==Number(id)&&x.refId===c.refId&&x.tipo==='imovel'&&x.status==='ativo');
+    if(!outroAtivo) S.imoveis=S.imoveis.map(x=>x.id===c.refId?{...x,status:'disponivel'}:x);
+  } else {
+    const ctsAt=S.contratos.filter(x=>x.refId===c.refId&&x.tipo==='item'&&x.status==='ativo'&&x.id!==Number(id)).length;
+    const it=git(c.refId);
+    if(it) S.itens=S.itens.map(x=>x.id===c.refId?{...x,status:ctsAt>=x.qtdTotal?'ocupado':'disponivel'}:x);
+  }
+  sv();closeModal();render();toast('Contrato encerrado ✓');
+}
+function delContrato(id){
+  if(!confirm('Excluir este contrato?')) return;
+  const c=gct(id);
+  S.contratos=S.contratos.filter(x=>x.id!==Number(id));
+  sv();closeModal();render();toast('Contrato excluído');
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL HELPERS
+// ══════════════════════════════════════════════════════
+function openModal(h){document.getElementById('mc').innerHTML=h;document.getElementById('ov').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// ══════════════════════════════════════════════════════
+//  PWA
+// ══════════════════════════════════════════════════════
+if('serviceWorker' in navigator){
+  const sw=`const C='lf2-v1';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['/']))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+tick();setInterval(tick,30000);render();
+</script>
+</body>
+</html>
